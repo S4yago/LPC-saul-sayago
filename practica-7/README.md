@@ -5,4 +5,4 @@ después descargarlo.
 
 **Ejemplo:**
 
-[![Vídeo de ejemplo]({./media/frame.png})]({./media/video-ejemplo.mkv} "Vídeo de ejemplo")
+![Vídeo de ejemplo](https://i.imgur.com/iAPnk92.gifv)
