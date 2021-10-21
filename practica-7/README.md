@@ -5,4 +5,4 @@ después descargarlo.
 
 **Ejemplo:**
 
-![Vídeo de ejemplo](https://i.imgur.com/sZVCNI4.gifv)
+![Vídeo de ejemplo](./video-prueba.gif)
