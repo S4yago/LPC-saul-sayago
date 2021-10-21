@@ -13,9 +13,9 @@ function usage() {
     -o       Nombre del host FTP
     -l       Nombre de usuario y contraseña
     -f       Archivos a descargar
-    -n=1-5   Nivel de profundidad de la búsqueda
+    -n       Nivel de profundidad de la búsqueda
              Entre más grande el numero, más tiempo podría tardar la
-             descarga de los archivos. DEFAULT=3
+             descarga de los archivos.
     -p       Dirección donde se guardaran los archivos a descargar'
 
 }    # ----------  end of function usage  ----------
@@ -56,18 +56,7 @@ EOF
 
 cd $PATH_F
 
-if [[ $SEARCH == 1 ]]; then
-    FOLDERS=`lftp -e 'find -d 1; bye' $HOST`
-elif [[ $SEARCH == 2 ]]; then
-    FOLDERS=`lftp -e 'find -d 2; bye' $HOST`
-elif [[ $SEARCH == 4 ]]; then
-    FOLDERS=`lftp -e 'find -d 4; bye' $HOST`
-elif [[ $SEARCH == 5 ]]; then
-    FOLDERS=`lftp -e 'find -d 5; bye' $HOST`
-else
-    FOLDERS=`lftp -e 'find -d 3; bye' $HOST`
-fi
-
+FOLDERS=`lftp -e "find -d $SEARCH; bye" $HOST`
 COUNT=`echo $FOLDERS | wc -w`
 USER=`echo $LOGIN | cut -d':' -f1`
 PASSWORD=`echo $LOGIN | cut -d':' -f2`
