@@ -1,0 +1,81 @@
+#!/bin/sh
+
+#===  FUNCTION  ================================================================
+#         NAME:  usage
+#  DESCRIPTION:  Display usage information.
+#===============================================================================
+function usage() {
+  echo 'Usage : ./ftp [-v] -o HOST -l USER:PASSWORD -f [-n NUMBER] FILES -p PATH
+
+    Options:
+    -h       Imprime este mensaje
+    -v       Imprime en pantalla las acciones del script
+    -o       Nombre del host FTP
+    -l       Nombre de usuario y contraseña
+    -f       Archivos a descargar
+    -n=1-5   Nivel de profundidad de la búsqueda
+             Entre más grande el numero, más tiempo podría tardar la
+             descarga de los archivos. DEFAULT=3
+    -p       Dirección donde se guardaran los archivos a descargar'
+
+}    # ----------  end of function usage  ----------
+
+
+trap ctrl_c INT
+
+function ctrl_c() {
+    echo -e "\n[!] Saliendo...\n$"
+
+    tput cnorm; exit 1
+}
+
+#-----------------------------------------------------------------------
+#  Handle command line arguments
+#-----------------------------------------------------------------------
+while getopts 'hvo:l:f:n:p:' flag; do
+  case "${flag}" in
+    h) usage; exit 0 ;;
+    v) VERBOSE='v' ;;
+    o) HOST=${OPTARG} ;;
+    l) LOGIN=${OPTARG} ;;
+    f) FILES=${OPTARG} ;;
+    n) SEARCH=${OPTARG} ;;
+    p) PATH_F=${OPTARG} ;;
+    *) usage; exit 1 ;;
+  esac    # --- end of case ---
+done
+
+dowload_files() {
+    ftp -in$VERBOSE $HOST <<EOF
+    user $USER $PASSWORD
+    cd $SOURCE
+    mget $FILES
+    bye
+EOF
+}
+
+cd $PATH_F
+
+if [[ $SEARCH == 1 ]]; then
+    FOLDERS=`lftp -e 'find -d 1; bye' $HOST`
+elif [[ $SEARCH == 2 ]]; then
+    FOLDERS=`lftp -e 'find -d 2; bye' $HOST`
+elif [[ $SEARCH == 4 ]]; then
+    FOLDERS=`lftp -e 'find -d 4; bye' $HOST`
+elif [[ $SEARCH == 5 ]]; then
+    FOLDERS=`lftp -e 'find -d 5; bye' $HOST`
+else
+    FOLDERS=`lftp -e 'find -d 3; bye' $HOST`
+fi
+
+echo $FOLDERS
+
+COUNT=`echo $FOLDERS | wc -w`
+USER=`echo $LOGIN | cut -d':' -f1`
+PASSWORD=`echo $LOGIN | cut -d':' -f2`
+
+for (( i = 1; i <= $COUNT; i++ )); do
+   SOURCE=`echo $FOLDERS | cut -d' ' -f$i`
+   dowload_files "$VERBOSE" "$HOST" "$USER" "$PASSWORD" "$SOURCE" "$FILES"
+done
+echo El script ha finalizado!
