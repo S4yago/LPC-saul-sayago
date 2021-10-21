@@ -68,8 +68,6 @@ else
     FOLDERS=`lftp -e 'find -d 3; bye' $HOST`
 fi
 
-echo $FOLDERS
-
 COUNT=`echo $FOLDERS | wc -w`
 USER=`echo $LOGIN | cut -d':' -f1`
 PASSWORD=`echo $LOGIN | cut -d':' -f2`
